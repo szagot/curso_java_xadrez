@@ -1,6 +1,10 @@
 package application;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 import chess.ChessPiece;
+import chess.ChessPosition;
 import chess.Color;
 
 /**
@@ -32,6 +36,31 @@ public class UI {
 	public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
 	public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
 	public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
+	/**
+	 * Lê a posição da peça para mover
+	 * 
+	 * @param sc
+	 * @return
+	 */
+	public static ChessPosition readChessPosition(Scanner sc) {
+		try {
+
+			// Lê a posição digitada pelo usuário
+			String s = sc.nextLine();
+			// Separa a coluna e a linha
+			char column = s.charAt(0);
+			int row = Integer.parseInt(s.substring(1));
+
+			// Retorna a posição do tabuleiro de Xadrez
+			return new ChessPosition(column, row);
+
+		} catch (RuntimeException e) {
+			// Se houver qualquer erro inesperado, cria uma exceção padrão para erro de
+			// entrada de dados
+			throw new InputMismatchException("Erro ao ler posição: Os valores válidos são de a1 a h8");
+		}
+	}
 
 	/**
 	 * Iprime o tabuleiro
@@ -79,7 +108,7 @@ public class UI {
 				System.out.print(ANSI_PURPLE + piece + ANSI_RESET);
 			}
 		}
-		
+
 		System.out.print(" ");
 	}
 }
