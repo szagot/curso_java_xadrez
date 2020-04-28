@@ -56,6 +56,9 @@ public class ChessMatch {
 		// Verifica se havia uma peça na posição de origem
 		validateSourcePosition(source);
 
+		// Verifica se o destino da peça é válido
+		validateTargetPosition(source, target);
+
 		// Move a peça e salva se houver uma peça capturada
 		Piece capturedPiece = makeMove(source, target);
 
@@ -76,6 +79,19 @@ public class ChessMatch {
 		// A peça pode mover?
 		if (!board.piece(position).isThereAnyPossivelMove()) {
 			throw new ChessException("Para essa peça não há movimentos possíveis");
+		}
+	}
+
+	/**
+	 * Faz a validação da possibilidade da jogada
+	 * 
+	 * @param source
+	 * @param target
+	 */
+	private void validateTargetPosition(Position source, Position target) {
+		// Para a peça de origem, a posição de destino é um movimento possível?
+		if (!board.piece(source).possibleMove(target)) {
+			throw new ChessException("A peça escolhida não pode se mover para a posição de destino informada");
 		}
 	}
 
