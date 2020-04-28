@@ -68,8 +68,14 @@ public class ChessMatch {
 	 * @param position
 	 */
 	private void validateSourcePosition(Position position) {
+		// Tem uma peça na origem?
 		if (!board.thereIsAPiece(position)) {
 			throw new ChessException("Não existe peça na posição de origem");
+		}
+
+		// A peça pode mover?
+		if (!board.piece(position).isThereAnyPossivelMove()) {
+			throw new ChessException("Para essa peça não há movimentos possíveis");
 		}
 	}
 
