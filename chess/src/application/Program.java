@@ -1,7 +1,9 @@
 package application;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import chess.ChessException;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -15,22 +17,34 @@ public class Program {
 
 		// TODO: temporário
 		while (true) {
+			try {
 
-			// Imprime o tabuleiro
-			UI.printBoard(chessMatch.getPieces());
+				// Imprime o tabuleiro
+				UI.clearScreen();
+				UI.printBoard(chessMatch.getPieces());
 
-			// Lê a peça a ser movida
-			System.out.println();
-			System.out.print("Origem: ");
-			ChessPosition source = UI.readChessPosition(sc);
+				// Lê a peça a ser movida
+				System.out.println();
+				System.out.print("Origem: ");
+				ChessPosition source = UI.readChessPosition(sc);
 
-			// Destino
-			System.out.println();
-			System.out.print("Alvo: ");
-			ChessPosition target = UI.readChessPosition(sc);
+				// Destino
+				System.out.println();
+				System.out.print("Alvo: ");
+				ChessPosition target = UI.readChessPosition(sc);
 
-			// Pega uma possível peça capturada
-			ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+				// Pega uma possível peça capturada
+				ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+
+			} catch (ChessException e) {
+				System.out.println(UI.ANSI_RED + e.getMessage() + UI.ANSI_RESET);
+				System.out.println(UI.ANSI_YELLOW + "(pressione [ENTER] para continuar...)" + UI.ANSI_RESET);
+				sc.nextLine();
+			} catch (InputMismatchException e) {
+				System.out.println(UI.ANSI_RED + e.getMessage() + UI.ANSI_RESET);
+				System.out.println(UI.ANSI_YELLOW + "(pressione [ENTER] para continuar...)" + UI.ANSI_RESET);
+				sc.nextLine();
+			}
 
 		}
 
