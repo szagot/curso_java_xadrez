@@ -5,7 +5,9 @@ import boardgame.Piece;
 import boardgame.Position;
 
 public abstract class ChessPiece extends Piece {
+
 	private Color color;
+	private Integer moveCount = 0;
 
 	/**
 	 * Cria uma peça de xadrez de acordo com a cor
@@ -20,6 +22,18 @@ public abstract class ChessPiece extends Piece {
 
 	public Color getColor() {
 		return color;
+	}
+
+	public void increaseMoveCount() {
+		moveCount++;
+	}
+
+	public void decreaseMoveCount() {
+		moveCount--;
+	}
+
+	public int getMoveCount() {
+		return moveCount;
 	}
 
 	/**
