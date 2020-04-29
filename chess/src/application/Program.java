@@ -21,7 +21,7 @@ public class Program {
 
 				// Imprime o tabuleiro
 				UI.clearScreen();
-				UI.printBoard(chessMatch.getPieces());
+				UI.printMatch(chessMatch);
 
 				// Lê a peça a ser movida
 				System.out.println();

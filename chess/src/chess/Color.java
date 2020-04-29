@@ -1,5 +1,18 @@
 package chess;
 
+/**
+ * ENUM com valores definidos
+ */
 public enum Color {
-	BLACK, WHITE
+	BLACK("Preto"), WHITE("Branco");
+
+	private String value;
+
+	Color(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
+	}
 }

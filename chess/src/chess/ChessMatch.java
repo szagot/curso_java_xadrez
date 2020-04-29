@@ -14,14 +14,28 @@ import chess.pieces.Rook;
  */
 public class ChessMatch {
 
+	private Integer turn;
+	private Color currentPlayer;
 	private Board board;
 
 	public ChessMatch() {
 		// Cria um tabuleiro no tamanho correto
 		board = new Board(8, 8);
 
+		// Inicia o turno e a cor do jogador inicial
+		turn = 1;
+		currentPlayer = Color.WHITE;
+
 		// Faz o setup do tabuleiro
 		initialSetup();
+	}
+
+	public int getTurn() {
+		return turn;
+	}
+
+	public Color getCurrentPlayer() {
+		return currentPlayer;
 	}
 
 	/**
@@ -51,7 +65,7 @@ public class ChessMatch {
 	public boolean[][] possibleMoves(ChessPosition sourcePosition) {
 		Position position = sourcePosition.toPosition();
 		validateSourcePosition(position);
-		
+
 		return board.piece(position).possibleMoves();
 	}
 
@@ -75,6 +89,9 @@ public class ChessMatch {
 		// Move a peça e salva se houver uma peça capturada
 		Piece capturedPiece = makeMove(source, target);
 
+		// Troca o turno
+		nextTurn();
+
 		return (ChessPiece) capturedPiece;
 	}
 
@@ -87,6 +104,11 @@ public class ChessMatch {
 		// Tem uma peça na origem?
 		if (!board.thereIsAPiece(position)) {
 			throw new ChessException("Não existe peça na posição de origem");
+		}
+
+		// O jogador atual é o mesmo da peça a ser movida?
+		if (currentPlayer != ((ChessPiece) board.piece(position)).getColor()) {
+			throw new ChessException("Essa peça é do outro jogador");
 		}
 
 		// A peça pode mover?
@@ -108,6 +130,21 @@ public class ChessMatch {
 		}
 	}
 
+	/**
+	 * Troca o turno
+	 */
+	private void nextTurn() {
+		turn++;
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+
+	/**
+	 * Faz uma jogada
+	 * 
+	 * @param source
+	 * @param target
+	 * @return
+	 */
 	private Piece makeMove(Position source, Position target) {
 		// Remove a peça da posição de origem
 		Piece p = board.removePiece(source);
