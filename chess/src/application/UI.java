@@ -1,7 +1,10 @@
 package application;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import chess.ChessMatch;
 import chess.ChessPiece;
@@ -76,12 +79,15 @@ public class UI {
 	 * Imprime a partida (tabuleiro e turnos)
 	 * 
 	 * @param chessMatch
+	 * @param captured 
 	 */
-	public static void printMatch(ChessMatch chessMatch) {
+	public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
 		printBoard(chessMatch.getPieces());
 		System.out.println();
-		System.out.println("Turno: " + chessMatch.getTurn());;
-		System.out.println("Jogador Atual: " + chessMatch.getCurrentPlayer().getValue());;
+		printCapturedPieces(captured);
+		System.out.println();
+		System.out.println("Turno: " + chessMatch.getTurn());
+		System.out.println("Jogador Atual: " + chessMatch.getCurrentPlayer().getText());
 	}
 
 	/**
@@ -165,5 +171,28 @@ public class UI {
 		}
 
 		System.out.print(" ");
+	}
+
+	/**
+	 * Imprime as peças capturadas
+	 * 
+	 * @param captured
+	 */
+	private static void printCapturedPieces(List<ChessPiece> captured) {
+		// Gera uma lista apenas com peças capturadas brancas
+		List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE)
+				.collect(Collectors.toList());
+		// Gera uma lista apenas com peças capturadas pretas
+		List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK)
+				.collect(Collectors.toList());
+
+		System.out.println("Peças capturadas");
+		System.out.print("Brancas: ");
+		// Imprime no formato padrão do array
+		System.out.println(ANSI_CYAN + Arrays.toString(white.toArray()) + ANSI_RESET);
+		
+		System.out.print("Pretas: ");
+		// Imprime no formato padrão do array
+		System.out.println(ANSI_PURPLE + Arrays.toString(black.toArray()) + ANSI_RESET);
 	}
 }
