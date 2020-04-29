@@ -90,12 +90,18 @@ public class UI {
 		System.out.println();
 		// Turno
 		System.out.println("Turno: " + chessMatch.getTurn());
-		// Jogador atual
-		System.out.println("Jogador Atual: " + chessMatch.getCurrentPlayer().getText());
+		// Está em checkmate?
+		if (chessMatch.getCheckMate()) {
+			System.out.println(ANSI_RED + "CHECK MATE!" + ANSI_RESET);
+			System.out.println(ANSI_GREEN + "Vencedor: " + chessMatch.getCurrentPlayer().getText());
+		} else {
+			// Jogador atual
+			System.out.println("Jogador Atual: " + chessMatch.getCurrentPlayer().getText());
 
-		// Está em check?
-		if (chessMatch.getCheck()) {
-			System.out.println(ANSI_RED + "CHECK!" + ANSI_RESET);
+			// Está em check?
+			if (chessMatch.getCheck()) {
+				System.out.println(ANSI_RED + "CHECK!" + ANSI_RESET);
+			}
 		}
 	}
 

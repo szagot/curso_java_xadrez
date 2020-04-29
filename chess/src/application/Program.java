@@ -18,8 +18,8 @@ public class Program {
 		ChessMatch chessMatch = new ChessMatch();
 		List<ChessPiece> captured = new ArrayList<>();
 
-		// TODO: temporário
-		while (true) {
+		// Roda enquanto não for checkmate
+		while (!chessMatch.getCheckMate()) {
 			try {
 
 				// Imprime a partida
@@ -58,6 +58,10 @@ public class Program {
 			}
 
 		}
+
+		// Imprime a visão da partida finalizadas
+		UI.clearScreen();
+		UI.printMatch(chessMatch, captured);
 
 	}
 
