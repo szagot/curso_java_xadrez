@@ -112,23 +112,7 @@ public class UI {
 	 */
 	public static void printBoard(ChessPiece[][] pieces) {
 
-		// Lê a matriz do tabuleiro para imprimir a peça
-		for (int i = 0; i < pieces.length; i++) {
-
-			// Imprime o número da linha do tabuleiro
-			System.out.print((8 - i) + " ");
-
-			for (int j = 0; j < pieces[i].length; j++) {
-				// Imprime a peça
-				printPiece(pieces[i][j], false);
-			}
-
-			// Terminando a linha, quebra a linha
-			System.out.println();
-		}
-
-		// Imprime as letras das colunas
-		System.out.println("  a b c d e f g h");
+		printBoard(pieces, null);
 
 	}
 
@@ -140,6 +124,9 @@ public class UI {
 	 */
 	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
 
+		// Imprime as letras das colunas
+		System.out.println("  a b c d e f g h");
+
 		// Lê a matriz do tabuleiro para imprimir a peça
 		for (int i = 0; i < pieces.length; i++) {
 
@@ -148,8 +135,15 @@ public class UI {
 
 			for (int j = 0; j < pieces[i].length; j++) {
 				// Imprime a peça
-				printPiece(pieces[i][j], possibleMoves[i][j]);
+				if (possibleMoves != null) {
+					printPiece(pieces[i][j], possibleMoves[i][j]);
+				} else {
+					printPiece(pieces[i][j], false);
+				}
 			}
+
+			// Imprime o número da linha do tabuleiro
+			System.out.print(8 - i);
 
 			// Terminando a linha, quebra a linha
 			System.out.println();
@@ -173,7 +167,7 @@ public class UI {
 
 		// Tinha peça nessa posição?
 		if (piece == null) {
-			System.out.print("-" + ANSI_RESET);
+			System.out.print(ANSI_YELLOW + "-" + ANSI_RESET);
 		} else {
 			// A peça é branca?
 			if (piece.getColor() == Color.WHITE) {
