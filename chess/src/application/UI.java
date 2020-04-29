@@ -86,7 +86,35 @@ public class UI {
 
 			for (int j = 0; j < pieces[i].length; j++) {
 				// Imprime a peça
-				printPiece(pieces[i][j]);
+				printPiece(pieces[i][j], false);
+			}
+
+			// Terminando a linha, quebra a linha
+			System.out.println();
+		}
+
+		// Imprime as letras das colunas
+		System.out.println("  a b c d e f g h");
+
+	}
+
+	/**
+	 * Imprime o tabuleiro destacando os movimentos possíveis
+	 * 
+	 * @param pieces
+	 * @param possibleMoves
+	 */
+	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
+
+		// Lê a matriz do tabuleiro para imprimir a peça
+		for (int i = 0; i < pieces.length; i++) {
+
+			// Imprime o número da linha do tabuleiro
+			System.out.print((8 - i) + " ");
+
+			for (int j = 0; j < pieces[i].length; j++) {
+				// Imprime a peça
+				printPiece(pieces[i][j], possibleMoves[i][j]);
 			}
 
 			// Terminando a linha, quebra a linha
@@ -102,11 +130,16 @@ public class UI {
 	 * Imprime uma única peça
 	 * 
 	 * @param piece
+	 * @param background Verifica se é pra colorir o fundo
 	 */
-	private static void printPiece(ChessPiece piece) {
+	private static void printPiece(ChessPiece piece, boolean background) {
+		if (background) {
+			System.out.print(ANSI_GREEN_BACKGROUND);
+		}
+
 		// Tinha peça nessa posição?
 		if (piece == null) {
-			System.out.print("-");
+			System.out.print("-" + ANSI_RESET);
 		} else {
 			// A peça é branca?
 			if (piece.getColor() == Color.WHITE) {
