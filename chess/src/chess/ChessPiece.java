@@ -23,6 +23,15 @@ public abstract class ChessPiece extends Piece {
 	}
 
 	/**
+	 * Pega a posição de uma peça no tabuleiro
+	 * 
+	 * @return
+	 */
+	public ChessPosition getChessPosition() {
+		return ChessPosition.fromPosition(position);
+	}
+
+	/**
 	 * Verifica a existência de uma peça adversária em uma posição
 	 * 
 	 * @param position
@@ -30,8 +39,8 @@ public abstract class ChessPiece extends Piece {
 	 */
 	protected boolean isThereOpponentPiece(Position position) {
 		ChessPiece p = (ChessPiece) getBoard().piece(position);
-		
+
 		// Tem uma peça na posição informada e a cor dela é diferente desta peça?
-		return p!= null && p.getColor() != color;
+		return p != null && p.getColor() != color;
 	}
 }

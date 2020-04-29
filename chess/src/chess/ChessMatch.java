@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -20,6 +22,7 @@ public class ChessMatch {
 	private Integer turn;
 	private Color currentPlayer;
 	private Board board;
+	private boolean check;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -42,6 +45,10 @@ public class ChessMatch {
 
 	public Color getCurrentPlayer() {
 		return currentPlayer;
+	}
+
+	public boolean getCheck() {
+		return check;
 	}
 
 	/**
@@ -95,6 +102,17 @@ public class ChessMatch {
 		// Move a peça e salva se houver uma peça capturada
 		Piece capturedPiece = makeMove(source, target);
 
+		// Verifica se colocou o proprio jogador em check
+		if (testCheck(currentPlayer)) {
+			// Desfaz o movimento
+			undoMove(source, target, capturedPiece);
+			// E lança uma exceção
+			throw new ChessException("Você não pode se colocar em check!");
+		}
+
+		// O oponente ficou em check?
+		check = testCheck(opponent(currentPlayer));
+
 		// Troca o turno
 		nextTurn();
 
@@ -141,7 +159,7 @@ public class ChessMatch {
 	 */
 	private void nextTurn() {
 		turn++;
-		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+		currentPlayer = opponent(currentPlayer);
 	}
 
 	/**
@@ -158,15 +176,100 @@ public class ChessMatch {
 		Piece capturedPiece = board.removePiece(target);
 		// Coloca a peça na posição de destino
 		board.placePiece(p, target);
-		
+
 		// Faz o controle da peça capturada
-		if(capturedPiece != null) {
+		if (capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
 			capturedPieces.add(capturedPiece);
 		}
 
 		// Retorna a peça capturada
 		return capturedPiece;
+	}
+
+	/**
+	 * Desfaz um movimento
+	 * 
+	 * @param source
+	 * @param target
+	 * @param capturedPiece
+	 */
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		// Remove a peça da posição de destino
+		Piece p = board.removePiece(target);
+		// Coloca a peça de volta na posição de origem
+		board.placePiece(p, source);
+
+		// Verifica se teve uma peça capturada
+		if (capturedPiece != null) {
+			// Recoloca no tabuleiro e atualiza as listas
+			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
+		}
+
+	}
+
+	/**
+	 * Retorna a cor do oponente
+	 * 
+	 * @param color
+	 * @return
+	 */
+	private Color opponent(Color color) {
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+
+	/**
+	 * Retorna o rei da cor escolhida
+	 * 
+	 * @param color
+	 * @return
+	 */
+	private ChessPiece king(Color color) {
+		// Gera uma nova lista apenas com as peças da cor escolhida
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color)
+				.collect(Collectors.toList());
+		for (Piece p : list) {
+			// É um Rei?
+			if (p instanceof King) {
+				// Devolve ele!
+				return (ChessPiece) p;
+			}
+		}
+
+		// Não achei o rei: Uma exceção que NÃO DEVE ocorrer jamais
+		throw new IllegalStateException("O Rei da cor " + color.getText() + " não existe no tabuleiro");
+	}
+
+	/**
+	 * Testa se o rei da cor informada está em check
+	 * 
+	 * @param color
+	 * @return
+	 */
+	private boolean testCheck(Color color) {
+		// Pega a posição do Rei
+		Position kingPosition = king(color).getChessPosition().toPosition();
+
+		// Faz a lista com todas as peças do oponente
+		List<Piece> opponentPieces = piecesOnTheBoard.stream()
+				.filter(x -> ((ChessPiece) x).getColor() == opponent(color)).collect(Collectors.toList());
+
+		// Testa cada peça do oponente para ver se alguma está dando check no rei
+		for (Piece p : opponentPieces) {
+			// Matriz de movimentos possíveis
+			boolean[][] mat = p.possibleMoves();
+
+			// A posição da matriz é a mesma da posição do rei?
+			if (mat[kingPosition.getRow()][kingPosition.getColumn()]) {
+				// Está em check
+				return true;
+			}
+		}
+
+		// Não está em check
+		return false;
 	}
 
 	/**

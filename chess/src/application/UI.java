@@ -79,15 +79,24 @@ public class UI {
 	 * Imprime a partida (tabuleiro e turnos)
 	 * 
 	 * @param chessMatch
-	 * @param captured 
+	 * @param captured
 	 */
 	public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
+		// Tabuleiro
 		printBoard(chessMatch.getPieces());
 		System.out.println();
+		// Peças capturadas
 		printCapturedPieces(captured);
 		System.out.println();
+		// Turno
 		System.out.println("Turno: " + chessMatch.getTurn());
+		// Jogador atual
 		System.out.println("Jogador Atual: " + chessMatch.getCurrentPlayer().getText());
+
+		// Está em check?
+		if (chessMatch.getCheck()) {
+			System.out.println(ANSI_RED + "CHECK!" + ANSI_RESET);
+		}
 	}
 
 	/**
@@ -190,7 +199,7 @@ public class UI {
 		System.out.print("Brancas: ");
 		// Imprime no formato padrão do array
 		System.out.println(ANSI_CYAN + Arrays.toString(white.toArray()) + ANSI_RESET);
-		
+
 		System.out.print("Pretas: ");
 		// Imprime no formato padrão do array
 		System.out.println(ANSI_PURPLE + Arrays.toString(black.toArray()) + ANSI_RESET);
