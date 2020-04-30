@@ -1,5 +1,6 @@
 package chess;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,9 @@ public class ChessMatch {
 
 	// En Passant
 	private ChessPiece enPassantVulnerable;
+
+	// Promoção (quando o peão chega na base do adversário)
+	private ChessPiece promoted;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -64,6 +68,10 @@ public class ChessMatch {
 
 	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVulnerable;
+	}
+
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 
 	/**
@@ -129,6 +137,20 @@ public class ChessMatch {
 		// Pegando a peça que se moveu
 		ChessPiece movedPiece = (ChessPiece) board.piece(target);
 
+		// Promoção
+		promoted = null;
+		// É um peão?
+		if (movedPiece instanceof Pawn) {
+			// Chegou na base do adversário?
+			if ((movedPiece.getColor() == Color.WHITE && target.getRow() == 0)
+					|| (movedPiece.getColor() == Color.BLACK && target.getRow() == 7)) {
+				// Marca o peão como peça a ser promovida
+				promoted = (ChessPiece) board.piece(target);
+				// Promove a peça (Padrão: Rainha)
+				promoted = replacePromotedPiece("A");
+			}
+		}
+
 		// O oponente ficou em check?
 		check = testCheck(opponent(currentPlayer));
 
@@ -153,6 +175,59 @@ public class ChessMatch {
 		}
 
 		return (ChessPiece) capturedPiece;
+	}
+
+	/**
+	 * Substitui o peão por uma peça a ser promovida
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public ChessPiece replacePromotedPiece(String type) {
+		// Tem peça a ser promovida?
+		if (promoted == null) {
+			throw new IllegalStateException("Não há peça a ser promovida");
+		}
+
+		// O tipo da peça é válida? ([T]orre, [C]avalo, [B]ispo ou r[A]inha)
+		if (!type.equals("T") && !type.equals("C") && !type.equals("B") && !type.equals("A")) {
+			throw new InvalidParameterException("Essa não é uma peça válida para promoção");
+		}
+
+		// Remove o peão original
+		Position pos = promoted.getChessPosition().toPosition();
+		Piece p = board.removePiece(pos);
+		piecesOnTheBoard.remove(p);
+
+		// Intancia uma nova peça
+		ChessPiece newPiece = newPiece(type, promoted.getColor());
+		// Coloca na posição da peça promovida
+		board.placePiece(newPiece, pos);
+		piecesOnTheBoard.add(newPiece);
+
+		return newPiece;
+	}
+
+	/**
+	 * Instancia uma nova peça
+	 * 
+	 * @param type
+	 * @param cor
+	 * @return
+	 */
+	private ChessPiece newPiece(String type, Color color) {
+		// Torre
+		if (type.equals("T"))
+			return new Rook(board, color);
+		// Cavalo
+		if (type.equals("C"))
+			return new Knight(board, color);
+		// Bispo
+		if (type.equals("B"))
+			return new Bishop(board, color);
+
+		// Padrão: Rainha
+		return new Queen(board, color);
 	}
 
 	/**
@@ -330,7 +405,7 @@ public class ChessMatch {
 					// Determina a posição do peão adversário a ser devolvido (Branco)
 					pawPosition = new Position(4, target.getColumn());
 				}
-				
+
 				// Devolve a peça para o lugar certo
 				board.placePiece(pawn, pawPosition);
 			}

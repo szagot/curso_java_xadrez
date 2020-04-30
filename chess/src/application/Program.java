@@ -46,6 +46,13 @@ public class Program {
 					// Se tiver uma peça, adiciona a lista
 					captured.add(capturedPiece);
 				}
+				
+				// Teve uma peça promovida?
+				if(chessMatch.getPromoted() != null) {
+					System.out.print("Digite para qual peça o peão será promovido ([T]orre, [C]avalo, [B]ispo ou r[A]inha): ");
+					String type = sc.nextLine();
+					chessMatch.replacePromotedPiece(type);
+				}
 
 			} catch (ChessException e) {
 				System.out.println(UI.ANSI_RED + e.getMessage() + UI.ANSI_RESET);
