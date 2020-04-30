@@ -46,11 +46,19 @@ public class Program {
 					// Se tiver uma peça, adiciona a lista
 					captured.add(capturedPiece);
 				}
-				
+
 				// Teve uma peça promovida?
-				if(chessMatch.getPromoted() != null) {
-					System.out.print("Digite para qual peça o peão será promovido ([T]orre, [C]avalo, [B]ispo ou r[A]inha): ");
-					String type = sc.nextLine();
+				if (chessMatch.getPromoted() != null) {
+					String type = "";
+					// garante que o usuário vai gigitar uma letra válida
+					do {
+						if (!type.isEmpty()) {
+							System.out.println(UI.ANSI_RED + "Valor inválido! " + UI.ANSI_RESET);
+						}
+						System.out.print(
+								"Digite para qual peça o peão será promovido ([T]orre, [C]avalo, [B]ispo ou r[A]inha): ");
+						type = sc.nextLine().toUpperCase();
+					} while (!type.equals("T") && !type.equals("C") && !type.equals("B") && !type.equals("A"));
 					chessMatch.replacePromotedPiece(type);
 				}
 

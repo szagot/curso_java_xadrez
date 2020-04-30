@@ -1,6 +1,5 @@
 package chess;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -191,7 +190,8 @@ public class ChessMatch {
 
 		// O tipo da peça é válida? ([T]orre, [C]avalo, [B]ispo ou r[A]inha)
 		if (!type.equals("T") && !type.equals("C") && !type.equals("B") && !type.equals("A")) {
-			throw new InvalidParameterException("Essa não é uma peça válida para promoção");
+			// Se a peça for inválida, retorna a padrão
+			return promoted;
 		}
 
 		// Remove o peão original
